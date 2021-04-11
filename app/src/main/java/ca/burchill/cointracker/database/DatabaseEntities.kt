@@ -12,7 +12,7 @@ import ca.burchill.cointracker.domain.Coin
 
 
 /**
- * DatabaseVideo represents a video entity in the database.
+ * DatabaseCoin represents a coin entity in the database.
  */
 @Entity
 data class DatabaseCoin constructor(
@@ -39,7 +39,7 @@ data class DatabaseCoin constructor(
 
 
 /**
- * Map DatabaseVideos to domain entities
+ * Map DatabaseCoins to domain entities
  */
 fun List<DatabaseCoin>.asDomainModel(): List<Coin> {
     return map {

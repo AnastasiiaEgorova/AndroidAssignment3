@@ -1,5 +1,6 @@
 package ca.burchill.cointracker.network
 
+import ca.burchill.cointracker.database.DatabaseCoin
 import ca.burchill.cointracker.domain.Coin
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -10,6 +11,7 @@ data class CoinApiResponse(
     val coins: List<NetworkCoin>,
     val status: NetworkStatus
 )
+
 
 @JsonClass(generateAdapter = true)
 data class NetworkCoin(
@@ -84,10 +86,11 @@ data class NetworkUSD(
     val volume_24h: Double
 )
 
-
 @JsonClass(generateAdapter = true)
-data class NetworkCoinContainer(val status: NetworkStatus, val coins: List<NetworkCoin>)
-
+data class NetworkCoinContainer(
+    val coins: List<NetworkCoin>,
+    val status: NetworkStatus
+)
 
 /**
  * Convert Network results to Domain objects
@@ -95,6 +98,36 @@ data class NetworkCoinContainer(val status: NetworkStatus, val coins: List<Netwo
 fun NetworkCoinContainer.asDomainModel(): List<Coin> {
     return coins.map {
         Coin(
+            circulating_supply = it.circulating_supply,
+            cmcRank = it.cmcRank,
+            date_added = it.date_added,
+            id = it.id,
+            max_supply = it.max_supply,
+            name = it.name,
+            num_market_pairs = it.num_market_pairs,
+            slug = it.slug,
+            symbol = it.symbol,
+            total_supply = it.total_supply,
+
+            market_cap = it.quote.USD.market_cap,
+            percent_change_1h = it.quote.USD.percent_change_1h,
+            percent_change_24h = it.quote.USD.percent_change_24h,
+            percent_change_30d = it.quote.USD.percent_change_30d,
+            percent_change_60d = it.quote.USD.percent_change_60d,
+            percent_change_7d = it.quote.USD.percent_change_7d,
+            percent_change_90d = it.quote.USD.percent_change_90d,
+            price = it.quote.USD.price,
+            volume_24h = it.quote.USD.volume_24h
+        )
+    }
+}
+
+/**
+ * Convert Network results to Database objects
+ */
+fun NetworkCoinContainer.asDatabaseModel(): List<DatabaseCoin> {
+    return coins.map {
+        DatabaseCoin(
             circulating_supply = it.circulating_supply,
             cmcRank = it.cmcRank,
             date_added = it.date_added,
